@@ -1,0 +1,26 @@
+name: BALA Live SENSEX Feed
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sensex-feed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run live SENSEX feed
+        env:
+          KOTAK_CONSUMER_KEY: ${{ secrets.KOTAK_CONSUMER_KEY }}
+          KOTAK_MOBILE: ${{ secrets.KOTAK_MOBILE }}
+          KOTAK_UCC: ${{ secrets.KOTAK_UCC }}
+          KOTAK_TOTP: ${{ secrets.KOTAK_TOTP }}
+          KOTAK_MPIN: ${{ secrets.KOTAK_MPIN }}
+        run: python live_sensex_feed.py
