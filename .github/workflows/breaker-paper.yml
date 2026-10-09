@@ -19,7 +19,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: feature/15m-breaker-paper
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -31,12 +30,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          mkdir -p data
+          if [ ! -f data/breaker_paper_state.json ]; then echo '{"mode":"PAPER_ONLY","symbols":{}}' > data/breaker_paper_state.json; fi
           git add data/breaker_paper_state.json
           if git diff --cached --quiet; then
             echo "No paper-ledger changes"
           else
             git commit -m "Update 15M Breaker paper ledger"
-            git push origin HEAD:feature/15m-breaker-paper
+            git push origin HEAD:${GITHUB_REF_NAME}
           fi
       - name: Upload paper report
         if: always()
