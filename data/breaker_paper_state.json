@@ -1,0 +1,15 @@
+{
+  "mode": "PAPER_ONLY",
+  "symbols": {
+    "SENSEX": {
+      "mode": "PAPER_ONLY",
+      "open_trade": null,
+      "trades": []
+    },
+    "NIFTY": {
+      "mode": "PAPER_ONLY",
+      "open_trade": null,
+      "trades": []
+    }
+  }
+}
