@@ -1,0 +1,47 @@
+name: 15M Breaker Paper Monitor
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/5 3-10 * * 1-5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: breaker-paper-monitor
+  cancel-in-progress: true
+
+jobs:
+  paper-monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/15m-breaker-paper
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate strategy
+        run: python -m unittest -v test_breaker_strategy.py
+      - name: Run paper monitor
+        run: python breaker_paper_runner.py | tee breaker_paper_report.json
+      - name: Persist paper ledger
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/breaker_paper_state.json
+          if git diff --cached --quiet; then
+            echo "No paper-ledger changes"
+          else
+            git commit -m "Update 15M Breaker paper ledger"
+            git push origin HEAD:feature/15m-breaker-paper
+          fi
+      - name: Upload paper report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: breaker-paper-report
+          path: breaker_paper_report.json
+          if-no-files-found: warn
