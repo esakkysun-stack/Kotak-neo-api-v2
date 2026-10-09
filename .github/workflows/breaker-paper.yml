@@ -1,6 +1,11 @@
 name: 15M Breaker Paper Monitor
 
 on:
+  push:
+    paths:
+      - "breaker_strategy.py"
+      - "breaker_paper_runner.py"
+      - ".github/workflows/breaker-paper.yml"
   workflow_dispatch:
   schedule:
     - cron: "*/5 3-10 * * 1-5"
